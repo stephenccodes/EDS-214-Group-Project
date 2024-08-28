@@ -28,7 +28,7 @@ BQ2raw <- read_csv(file.path(raw_data, "QuebradaCuenca2-Bisley.csv"))
 
 ```{r}
 BQ2 <- BQ2raw %>%
-  select(Sample_Date, K, `NO3-N`) %>%
+  select(Sample_Date, Sample_ID, K, `NO3-N`) %>%
     mutate(Sample_Date = (lubridate::ymd(Sample_Date))) %>%
     clean_names()
 ```
