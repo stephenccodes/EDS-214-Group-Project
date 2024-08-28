@@ -1,0 +1,31 @@
+---
+title: "Test_plot_BQ2"
+author: "Stephen Carroll"
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library(tidyverse)
+library(patchwork)
+library(ggrepel)
+library(gghighlight)
+library(paletteer)
+library(ggExtra)
+library(ggbeeswarm)
+```
+
+
+```{r}
+
+ggplot(data = BQ2, aes(x = sample_date, y = k)) +
+  geom_line() +
+  theme_classic() +
+   facet_wrap(~k, ncol = 1, scales = "free")
+  labs(title = "Comparing levels of Potassium and Nitrates in the Luiquillo River", x = "Year", y = "K (mg)")
+  
+
+```
+
