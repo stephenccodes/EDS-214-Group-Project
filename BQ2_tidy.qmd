@@ -1,0 +1,35 @@
+---
+title: "BQ2"
+author: "Stephen Carroll"
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(dplyr)
+library(lubridate)
+```
+
+
+```{r}
+
+raw_data = "/courses/EDS214/group_project/2024/senven/raw_data/knb-lter-luq" 
+```
+
+
+
+```{r}
+BQ2raw <- read_csv(file.path(raw_data, "QuebradaCuenca2-Bisley.csv"))
+```
+
+```{r}
+BQ2 <- BQ2raw %>%
+  select(Sample_Date, Sample_ID, K, `NO3-N`) %>%
+    mutate(Sample_Date = (lubridate::ymd(Sample_Date))) %>%
+    clean_names()
+```
+
