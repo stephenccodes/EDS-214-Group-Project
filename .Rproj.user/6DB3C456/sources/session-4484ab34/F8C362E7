@@ -1,0 +1,32 @@
+{
+    "id": "F8C362E7",
+    "path": "~/MEDS/EDS214/group_project/EDS-214-Group-Project/scripts/table_join.qmd",
+    "project_path": "scripts/table_join.qmd",
+    "type": "quarto_markdown",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1724885558055.0,
+    "source_on_save": false,
+    "relative_order": 1,
+    "properties": {
+        "rmdVisualMode": "true",
+        "rmdVisualWrapConfigured": "true",
+        "chunk_output_type": "console",
+        "source_window_id": "",
+        "Source": "Source",
+        "docOutlineVisible": "1",
+        "rmdVisualCollapsedChunks": "",
+        "rmdVisualModeLocation": "1589:1132",
+        "cursorPosition": "76,0",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1724959327,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1724959327391,
+    "read_only": false,
+    "read_only_alternatives": []
+}

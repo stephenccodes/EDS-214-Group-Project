@@ -1,0 +1,42 @@
+---
+title: "BQ3"
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+## load libraries
+
+```{r}
+library(tidyverse)
+library(here)
+library(readr)
+library(dplyr)
+library(lubridate)
+library(janitor)
+```
+
+## read in data for BQ3 ----
+
+```{r}
+
+Q3_Bisley <- read_csv("/courses/EDS214/group_project/2024/senven/raw_data/knb-lter-luq/QuebradaCuenca3-Bisley.csv")
+View(QuebradaCuenca3_Bisley)
+
+```
+
+## tidy data
+
+create year column snake case
+
+```{r}
+clean_names
+
+clean_Q3 <- Q3_Bisley |>
+select('Sample_Date', 'K', `NO3-N`, 'Sample_ID') |>
+  mutate(Sample_Date = lubridate::ymd(Sample_Date)) |>
+  clean_names()
+  
+ 
+```
