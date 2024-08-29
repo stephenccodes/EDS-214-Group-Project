@@ -1,0 +1,77 @@
+---
+title: "table_join"
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library(tidyverse)
+library(here)
+library(dplyr)
+library(lubridate)
+library(janitor)
+library(patchwork)
+```
+
+```{r}
+#Data Path
+data_raw_path = "/courses/EDS214/group_project/2024/senven/raw_data/knb-lter-luq"
+```
+
+```{r}
+#Assign CSV to a Data Frame
+raw1 <- read_csv(file.path(data_raw_path, "QuebradaCuenca1-Bisley.csv"))
+raw2 <- read_csv(file.path(data_raw_path, "QuebradaCuenca2-Bisley.csv"))
+raw3 <- read_csv(file.path(data_raw_path, "QuebradaCuenca3-Bisley.csv"))
+raw4 <- read_csv(file.path(data_raw_path, "RioMameyesPuenteRoto.csv"))
+
+#Assign data fram to a new name for processing
+preclean1 <- raw1
+preclean2 <- raw2
+preclean3 <- raw3
+preclean4 <- raw4
+```
+
+```{r}
+#Clean data frame function
+senven_tidy_function <- function(raw_file_name){
+  clean_file_name <- raw_file_name %>%
+  select(Sample_ID, Sample_Date,`NO3-N`, K) %>%
+  mutate(Sample_Date = lubridate::ymd(Sample_Date)) %>%
+  clean_names()
+}
+```
+
+```{r}
+#Assign processed data frame to new data frame name
+clean1 <- senven_tidy_function(preclean1)
+clean2 <- senven_tidy_function(preclean2)
+clean3 <- senven_tidy_function(preclean3)
+clean4 <- senven_tidy_function(preclean4)
+```
+
+```{r}
+#Join data frames together
+clean_table <- full_join(clean1,clean2) %>%
+  full_join(clean3) %>%
+  full_join(clean4)
+```
+
+```{r}
+#Create duplicate plot
+copycat_k_plot <- ggplot(data = clean_table, aes(x = sample_date, y = k))+
+  scale_x_date(date_breaks = "1 year", 
+               minor_breaks = "1 month", 
+               limits = as.Date(c("1988-01-01", "1995-01-01")))+
+  geom_line(aes(color = sample_id))
+
+copycat_n_plot <- ggplot(data = clean_table, aes(x = sample_date, y = no3_n))+
+  scale_x_date(date_breaks = "1 year", 
+               minor_breaks = "1 month", 
+               limits = as.Date(c("1988-01-01", "1995-01-01")))+
+  geom_line(aes(color = sample_id))
+
+copycat_k_plot / copycat_n_plot
+```
