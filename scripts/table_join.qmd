@@ -71,7 +71,7 @@ copycat_k_plot <- ggplot(data = clean_table, aes(x = sample_date, y = k)) +
                      labels = c("Bisley Quebrada 1", "Bisley Quebrada 2", "Bisley Quebrada 3", "Rio Mames Punto Roto")) +
     scale_shape_discrete(name = "Stream",
                      labels = c("Bisley Quebrada 1", "Bisley Quebrada 2", "Bisley Quebrada 3", "Rio Mames Punto Roto")) +
-  labs(x = "Year", y = "K (mg)") +
+  labs(x = "Year", y = "K (mg/L)") +
   geom_vline(xintercept = as.Date(c("1989-10-18")), linetype = "dashed", color = "black", alpha = 0.4) +
     annotate("text", x = as.Date(c("1991-3-18")), y = 0.1, label = "Hurricane Hugo", color = "black", size = 1.8) +
   scale_y_continuous(breaks = seq(from = 0, to = 2.2, by = .2), 
@@ -90,12 +90,12 @@ copycat_n_plot <- ggplot(data = clean_table, aes(x = sample_date, y = no3_n)) +
                labels = scales::label_date("'%y"), 
                limits = as.Date(c("1988-01-01", "1995-01-01")))+ 
   geom_line(aes(color = sample_id)) +
-   scale_color_manual(name = "Stream",
+   scale_color_manual(name = "stream",
                        values = c("hotpink", "skyblue3", "green", "#462255"),
                      labels = c("Bisley Quebrada 1", "Bisley Quebrada 2", "Bisley Quebrada 3", "Rio Mames Punto Roto")) +
-    scale_shape_discrete(name = "Stream",
+    scale_shape_discrete(name = "Stream:",
                      labels = c("Bisley Quebrada 1", "Bisley Quebrada 2", "Bisley Quebrada 3", "Rio Mames Punto Roto")) +
-  labs(x = "Year", y = "NO3 (ug)") +
+  labs(title = "K and NO3 measurements in watersheds in the Luquillo Experimental Forest  from 1988 to 1995", x = "Year", y = "NO3 (ug/L)") +
   geom_vline(xintercept = as.Date(c("1989-10-18")), linetype = "dashed", color = "black", alpha = 0.4) +
     annotate("text", x = as.Date(c("1988-10-18")), y = 1100, label = "Hurricane Hugo", color = "black", size = 1.8) +
   scale_y_continuous(breaks = seq(from = 0, to = 1500, by = 300), 
@@ -109,7 +109,7 @@ copycat_n_plot <- ggplot(data = clean_table, aes(x = sample_date, y = no3_n)) +
 ```
 
 ```{r}
-copycat_k_plot / copycat_n_plot
+copycat_n_plot / copycat_k_plot 
 ```
 
 
