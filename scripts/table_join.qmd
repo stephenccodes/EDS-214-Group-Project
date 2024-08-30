@@ -61,17 +61,57 @@ clean_table <- full_join(clean1,clean2) %>%
 
 ```{r}
 #Create duplicate plot
-copycat_k_plot <- ggplot(data = clean_table, aes(x = sample_date, y = k))+
-  scale_x_date(date_breaks = "1 year", 
-               minor_breaks = "1 month", 
-               limits = as.Date(c("1988-01-01", "1995-01-01")))+
-  geom_line(aes(color = sample_id))
-
-copycat_n_plot <- ggplot(data = clean_table, aes(x = sample_date, y = no3_n))+
-  scale_x_date(date_breaks = "1 year", 
-               minor_breaks = "1 month", 
-               limits = as.Date(c("1988-01-01", "1995-01-01")))+
-  geom_line(aes(color = sample_id))
-
-copycat_k_plot / copycat_n_plot
+copycat_k_plot <- ggplot(data = clean_table, aes(x = sample_date, y = k)) +
+  scale_x_date(breaks = scales::breaks_width("1 year"), 
+               labels = scales::label_date("'%y"), 
+               limits = as.Date(c("1988-01-01", "1995-01-01")))+ 
+  geom_line(aes(color = sample_id)) +
+   scale_color_manual(name = "Stream",
+                       values = c("hotpink", "skyblue3", "green", "#462255"),
+                     labels = c("Bisley Quebrada 1", "Bisley Quebrada 2", "Bisley Quebrada 3", "Rio Mames Punto Roto")) +
+    scale_shape_discrete(name = "Stream",
+                     labels = c("Bisley Quebrada 1", "Bisley Quebrada 2", "Bisley Quebrada 3", "Rio Mames Punto Roto")) +
+  labs(x = "Year", y = "K (mg/L)") +
+  geom_vline(xintercept = as.Date(c("1989-10-18")), linetype = "dashed", color = "black", alpha = 0.4) +
+    annotate("text", x = as.Date(c("1991-3-18")), y = 0.1, label = "Hurricane Hugo", color = "black", size = 1.8) +
+  scale_y_continuous(breaks = seq(from = 0, to = 2.2, by = .2), 
+                     limits = c(0, 2)) +
+  theme_minimal() +
+  theme(text = element_text(size = 12, family="serif"),
+        panel.grid.major.y = element_line(color = "black", size = 0.1),
+        panel.grid.major.x = element_blank(),
+        plot.background = element_rect(fill = "white")) +
+  facet_wrap(~sample_id, ncol = 2)
 ```
+
+```{r}
+copycat_n_plot <- ggplot(data = clean_table, aes(x = sample_date, y = no3_n)) +
+  scale_x_date(breaks = scales::breaks_width("1 year"), 
+               labels = scales::label_date("'%y"), 
+               limits = as.Date(c("1988-01-01", "1995-01-01")))+ 
+  geom_line(aes(color = sample_id)) +
+   scale_color_manual(name = "stream",
+                       values = c("hotpink", "skyblue3", "green", "#462255"),
+                     labels = c("Bisley Quebrada 1", "Bisley Quebrada 2", "Bisley Quebrada 3", "Rio Mames Punto Roto")) +
+    scale_shape_discrete(name = "Stream:",
+                     labels = c("Bisley Quebrada 1", "Bisley Quebrada 2", "Bisley Quebrada 3", "Rio Mames Punto Roto")) +
+  labs(title = "K and NO3 measurements in watersheds in the Luquillo Experimental Forest  from 1988 to 1995", x = "Year", y = "NO3 (ug/L)") +
+  geom_vline(xintercept = as.Date(c("1989-10-18")), linetype = "dashed", color = "black", alpha = 0.4) +
+    annotate("text", x = as.Date(c("1988-10-18")), y = 1100, label = "Hurricane Hugo", color = "black", size = 1.8) +
+  scale_y_continuous(breaks = seq(from = 0, to = 1500, by = 300), 
+                     limits = c(0, 1500)) +
+  theme_minimal() +
+  theme(text = element_text(size = 12, family="serif"),
+        panel.grid.major.y = element_line(color = "black", size = 0.1),
+        panel.grid.major.x = element_blank(),
+        plot.background = element_rect(fill = "white")) +
+  facet_wrap(~sample_id, ncol = 2)
+```
+
+```{r}
+copycat_n_plot / copycat_k_plot 
+```
+
+
+
+
