@@ -24,7 +24,6 @@ library(patchwork)
 
 raw5_QPA <- read_csv("/courses/EDS214/group_project/2024/senven/raw_data/knb-lter-luq/QuebradaPrieta-A.csv")
 
-
 view(clean_table)
 #Assign data frame to a new name for processing
 preclean5_QPA <- raw5_QPA
