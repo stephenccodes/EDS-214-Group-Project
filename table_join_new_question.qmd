@@ -1,0 +1,118 @@
+---
+title: "additional question"
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+## How did the hurricane disturbance in the Bisley Watershed compare to the Quebrada Prieta A watershed? (Measuring K and NO3 from 1988 to 1995)
+
+```{r}
+#load libraries
+library(tidyverse)
+library(here)
+library(dplyr)
+library(lubridate)
+library(janitor)
+library(patchwork)
+
+```
+
+```{r}
+#read in data for Quebrada Prieta A Watershed and Bisley Watershed (clean_table)
+
+raw5_QPA <- read_csv("/courses/EDS214/group_project/2024/senven/raw_data/knb-lter-luq/QuebradaPrieta-A.csv")
+View(QuebradaPrieta_A)
+
+view(clean_table)
+#Assign data frame to a new name for processing
+preclean5_QPA <- raw5_QPA
+
+```
+
+```{r}
+#Clean data frame function using senven_tidy_function
+
+# senven_tidy_function <- function(raw_file_name){
+# clean_file_name <- raw_file_name %>%
+# select(Sample_ID, Sample_Date,`NO3-N`, K) %>%
+# mutate(Sample_Date = lubridate::ymd(Sample_Date)) %>%
+# clean_names()
+# }
+
+```
+
+```{r}
+
+#Assign processed data frame to new data frame name
+clean5_QPA <- senven_tidy_function(preclean5_QPA)
+
+```
+
+```{r}
+#Join data frames together
+clean_table_new_question <- full_join(clean_table,clean5_QPA)
+
+```
+
+```{r}
+#make your plots that include the watershed site!
+
+add_watershed_k_plot <- ggplot(data = clean_table_new_question, aes(x = sample_date, y = k))+
+  scale_x_date(date_breaks = "1 year", 
+               minor_breaks = "1 month", 
+               limits = as.Date(c("1988-01-01", "1995-01-01")))+
+  geom_line(aes(color = sample_id))
+
+add_watershed_n_plot <- ggplot(data = clean_table_new_question, aes(x = sample_date, y = no3_n))+
+  scale_x_date(date_breaks = "1 year", 
+               minor_breaks = "1 month", 
+               limits = as.Date(c("1988-01-01", "1995-01-01")))+
+  geom_line(aes(color = sample_id))
+
+add_watershed_k_plot / add_watershed_n_plot
+#not super easy to interpret - let's group all Bisley Watershed sites into one
+
+```
+
+```{r}
+
+# Group Bisley Watershed into one 
+ 
+#Bishley watershed data into one table for K
+subset_Bisley_k <- clean_table  
+
+subset_Bisley_k[ , 'sample_id'] = "Bisley"
+
+subset_Bisley_k <- subset_Bisley_k |>
+   group_by(sample_date, sample_id) |>
+    summarize(k = mean(k)) 
+
+
+clean_table_subset_join_k <- full_join(clean5_QPA, subset_Bisley_k)
+ 
+#Bisley Watershed data into one table for NO3
+
+subset_Bisley_n <- clean_table  
+
+subset_Bisley_n[ , 'sample_id'] = "Bisley"
+
+subset_Bisley_n <- subset_Bisley_n |>
+   group_by(sample_date, sample_id) |>
+    summarize(no3 = mean(no3_n)) 
+ 
+
+```
+
+```{r}
+# let's make a plot that compares the Bisley Watershed to QPA Watershed
+
+bisley_vs_QPA_k_plot <- ggplot(data = subset_Bisley_k, aes(x = sample_date, y = mean_bisley_k))+
+  scale_x_date(date_breaks = "1 year", 
+               minor_breaks = "1 month", 
+               limits = as.Date(c("1988-01-01", "1995-01-01")))+
+  geom_line()
+
+bisley_vs_QPA_k_plot
+```
