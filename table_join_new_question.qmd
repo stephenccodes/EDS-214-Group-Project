@@ -111,11 +111,27 @@ clean_table_subset_join_n <- full_join(clean5_QPA, subset_Bisley_n)
 bisley_vs_QPA_k_plot <- ggplot(data = clean_table_subset_join_k, aes(x = sample_date, y = k)) +
   scale_x_date(date_breaks = "1 year", 
                minor_breaks = "1 month", 
+               labels = scales::label_date("'%y"), 
                limits = as.Date(c("1988-01-01", "1995-01-01")))+
   geom_line(aes(color = sample_id)) +
   labs(x = "Years", 
-       y = "K",
-       title = "Bisley vs Quebrada Prieta A watershed" )
+       y = "K (mg/L)",
+       title = "Bisley vs Quebrada Prieta A Watershed", 
+       fill = "Watersheds") +
+geom_vline(xintercept = as.Date(c("1989-10-18")), linetype = "dashed", color = "black", alpha = 0.4) +
+  annotate("text", x = as.Date(c("1990-04-18")), y = 0.1, label = "Hurricane Hugo", color = "black", size = 2.5) +
+  scale_y_continuous(breaks = seq(from = 0, to = 2.2, by = .2), 
+                     limits = c(0, 2)) +
+  theme_minimal() +
+  theme(text = element_text(size = 12, family="serif"),
+        panel.grid.major.y = element_line(color = "black", size = 0.1),
+        panel.grid.major.x = element_blank(),
+        plot.background = element_rect(fill = "white")) +
+scale_color_manual(name = "watersheds",
+                   values = c("#93E1D8", "#AA4465"),
+                   labels = c("Bisley Watershed", "Quebrada Prieta A Watershed")) +
+  scale_shape_discrete(name = "Watersheds:",
+                       labels = c("Bisley Watershed", "Quebrada Prieta A"))
 
 bisley_vs_QPA_k_plot
 
@@ -123,11 +139,22 @@ bisley_vs_QPA_k_plot
 bisley_vs_QPA_n_plot <- ggplot(data = clean_table_subset_join_n, aes(x = sample_date, y = no3_n)) +
   scale_x_date(date_breaks = "1 year", 
                minor_breaks = "1 month", 
+               labels = scales::label_date("'%y"), 
                limits = as.Date(c("1988-01-01", "1995-01-01")))+
   geom_line(aes(color = sample_id)) +
   labs(x = "Years", 
-       y = "NO3" )
-
+       y = "NO3 (ug/L)",
+       fill = "Watersheds") +
+  theme_minimal() +
+  theme(text = element_text(size = 12, family="serif"),
+        panel.grid.major.y = element_line(color = "black", size = 0.1),
+        panel.grid.major.x = element_blank(),
+        plot.background = element_rect(fill = "white")) +
+scale_color_manual(name = "watersheds",
+                   values = c("#93E1D8", "#AA4465"),
+                   labels = c("Bisley Watershed", "Quebrada Prieta A Watershed")) +
+  scale_shape_discrete(name = "Watersheds:",
+                       labels = c("Bisley Watershed", "Quebrada Prieta A"))
 bisley_vs_QPA_n_plot
 
 bisley_vs_QPA_k_plot / bisley_vs_QPA_n_plot
