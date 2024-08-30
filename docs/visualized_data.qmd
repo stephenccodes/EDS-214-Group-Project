@@ -1,0 +1,219 @@
+---
+title: "How did the hurricane disturbance in the Bisley Watershed compare to the Quebrada Prieta A watershed? (Measuring K and NO3 from 1988 to 1995)"
+format: html
+editor: visual
+---
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(here)
+library(dplyr)
+library(lubridate)
+library(janitor)
+library(patchwork)
+library(ggeasy)
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+#Data Path
+data_raw_path = "/courses/EDS214/group_project/2024/senven/raw_data/knb-lter-luq"
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+#Assign CSV to a Data Frame
+raw1 <- read_csv(file.path(data_raw_path, "QuebradaCuenca1-Bisley.csv"))
+raw2 <- read_csv(file.path(data_raw_path, "QuebradaCuenca2-Bisley.csv"))
+raw3 <- read_csv(file.path(data_raw_path, "QuebradaCuenca3-Bisley.csv"))
+raw4 <- read_csv(file.path(data_raw_path, "RioMameyesPuenteRoto.csv"))
+
+#Assign data fram to a new name for processing
+preclean1 <- raw1
+preclean2 <- raw2
+preclean3 <- raw3
+preclean4 <- raw4
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+#Clean data frame function
+senven_tidy_function <- function(raw_file_name){
+  clean_file_name <- raw_file_name %>%
+  select(Sample_ID, Sample_Date,`NO3-N`, K) %>%
+  mutate(Sample_Date = lubridate::ymd(Sample_Date)) %>%
+  clean_names()
+}
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+#Assign processed data frame to new data frame name
+clean1 <- senven_tidy_function(preclean1)
+clean2 <- senven_tidy_function(preclean2)
+clean3 <- senven_tidy_function(preclean3)
+clean4 <- senven_tidy_function(preclean4)
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+#Join data frames together
+clean_table <- full_join(clean1,clean2) %>%
+  full_join(clean3) %>%
+  full_join(clean4)
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+#Create duplicate plot
+copycat_k_plot <- ggplot(data = clean_table, aes(x = sample_date, y = k)) +
+  scale_x_date(breaks = scales::breaks_width("1 year"), 
+               labels = scales::label_date("'%y"), 
+               limits = as.Date(c("1988-01-01", "1995-01-01")))+ 
+  geom_line(aes(color = sample_id)) +
+   scale_color_manual(name = "Stream:",
+                       values = c("hotpink", "skyblue3", "green", "#462255"),
+                     labels = c("Bisley Quebrada 1", "Bisley Quebrada 2", "Bisley Quebrada 3", "Rio Mames Punto Roto")) +
+    scale_shape_discrete(name = "Stream:",
+                     labels = c("Bisley Quebrada 1", "Bisley Quebrada 2", "Bisley Quebrada 3", "Rio Mames Punto Roto")) +
+  labs(x = "Year", y = "K (mg/L)") +
+  geom_vline(xintercept = as.Date(c("1989-10-18")), linetype = "dashed", color = "black", alpha = 0.4) +
+    annotate("text", x = as.Date(c("1990-9-18")), y = 0.1, label = "Hurricane Hugo", color = "black", size = 1.8) +
+  scale_y_continuous(breaks = seq(from = 0, to = 2.2, by = .2), 
+                     limits = c(0, 2)) +
+  theme_minimal() +
+  theme(text = element_text(size = 12, family="serif"),
+        panel.grid.major.y = element_line(color = "black", size = 0.1),
+        panel.grid.major.x = element_blank(),
+        plot.background = element_rect(fill = "white")) +
+  facet_wrap(~sample_id, ncol = 2)
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+copycat_n_plot <- ggplot(data = clean_table, aes(x = sample_date, y = no3_n)) +
+  scale_x_date(breaks = scales::breaks_width("1 year"), 
+               labels = scales::label_date("'%y"), 
+               limits = as.Date(c("1988-01-01", "1995-01-01")))+ 
+  geom_line(aes(color = sample_id)) +
+   ggeasy::easy_center_title()+
+   scale_color_manual(name = "Stream:",
+                       values = c("hotpink", "skyblue3", "green", "#462255"),
+                     labels = c("Bisley Quebrada 1", "Bisley Quebrada 2", "Bisley Quebrada 3", "Rio Mames Punto Roto")) +
+    scale_shape_discrete(name = "Stream:",
+                     labels = c("Bisley Quebrada 1", "Bisley Quebrada 2", "Bisley Quebrada 3", "Rio Mames Punto Roto")) +
+  labs(title = "K and NO3 measurements in watersheds of the Luquillo Experimental Forest\n from 1988 to 1995", x = "Year", y = "NO3 (ug/L)") +
+  geom_vline(xintercept = as.Date(c("1989-10-18")), linetype = "dashed", color = "black", alpha = 0.4) +
+    annotate("text", x = as.Date(c("1988-10-18")), y = 1100, label = "Hurricane Hugo", color = "black", size = 1.8) +
+  scale_y_continuous(breaks = seq(from = 0, to = 1500, by = 300), 
+                     limits = c(0, 1500)) +
+  theme_minimal() +
+  theme(text = element_text(size = 12, family="serif"),
+        panel.grid.major.y = element_line(color = "black", size = 0.1),
+        panel.grid.major.x = element_blank(),
+        plot.background = element_rect(fill = "white")) +
+  facet_wrap(~sample_id, ncol = 2)
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+copycat_n_plot / copycat_k_plot 
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+#read in data for Quebrada Prieta A Watershed and Bisley Watershed (clean_table)
+
+raw5_QPA <- read_csv("/courses/EDS214/group_project/2024/senven/raw_data/knb-lter-luq/QuebradaPrieta-A.csv")
+
+view(clean_table)
+#Assign data frame to a new name for processing
+preclean5_QPA <- raw5_QPA
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+
+#Assign processed data frame to new data frame name
+clean5_QPA <- senven_tidy_function(preclean5_QPA)
+
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+#Join data frames together
+clean_table_new_question <- full_join(clean_table,clean5_QPA)
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+
+# Group Bisley Watershed into one 
+ 
+#Bishley watershed data into one table for K
+subset_Bisley_k <- clean_table  
+
+subset_Bisley_k[ , 'sample_id'] = "Bisley"
+
+subset_Bisley_k <- subset_Bisley_k |>
+   group_by(sample_date, sample_id) |>
+    summarize(k = mean(k)) 
+
+
+clean_table_subset_join_k <- full_join(clean5_QPA, subset_Bisley_k)
+ 
+#Bisley Watershed data into one table for NO3
+
+subset_Bisley_n <- clean_table  
+
+subset_Bisley_n[ , 'sample_id'] = "Bisley"
+
+subset_Bisley_n <- subset_Bisley_n |>
+   group_by(sample_date, sample_id) |>
+    summarize(no3_n = mean(no3_n)) 
+ 
+clean_table_subset_join_n <- full_join(clean5_QPA, subset_Bisley_n)
+
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# let's make a plot that compares the Bisley Watershed to QPA Watershed
+
+bisley_vs_QPA_k_plot <- ggplot(data = clean_table_subset_join_k, aes(x = sample_date, y = k)) +
+  scale_x_date(date_breaks = "1 year", 
+               minor_breaks = "1 month", 
+               labels = scales::label_date("'%y"), 
+               limits = as.Date(c("1988-01-01", "1995-01-01")))+
+  geom_line(aes(color = sample_id)) +
+  labs(x = "Years", 
+       y = "K (mg/L)",
+       title = "Bisley vs Quebrada Prieta A Watershed", 
+       fill = "Watersheds") +
+geom_vline(xintercept = as.Date(c("1989-10-18")), linetype = "dashed", color = "black", alpha = 0.4) +
+  annotate("text", x = as.Date(c("1990-04-18")), y = 0.1, label = "Hurricane Hugo", color = "black", size = 2.5) +
+  scale_y_continuous(breaks = seq(from = 0, to = 2.2, by = .2), 
+                     limits = c(0, 2)) +
+  theme_minimal() +
+  theme(text = element_text(size = 12, family="serif"),
+        panel.grid.major.y = element_line(color = "black", size = 0.1),
+        panel.grid.major.x = element_blank(),
+        plot.background = element_rect(fill = "white")) +
+scale_color_manual(name = "watersheds",
+                   values = c("#93E1D8", "#AA4465"),
+                   labels = c("Bisley Watershed", "Quebrada Prieta A Watershed")) +
+  scale_shape_discrete(name = "Watersheds:",
+                       labels = c("Bisley Watershed", "Quebrada Prieta A"))
+
+
+bisley_vs_QPA_n_plot <- ggplot(data = clean_table_subset_join_n, aes(x = sample_date, y = no3_n)) +
+  scale_x_date(date_breaks = "1 year", 
+               minor_breaks = "1 month", 
+               labels = scales::label_date("'%y"), 
+               limits = as.Date(c("1988-01-01", "1995-01-01")))+
+  geom_line(aes(color = sample_id)) +
+  labs(x = "Years", 
+       y = "NO3 (ug/L)",
+       fill = "Watersheds") +
+  theme_minimal() +
+  theme(text = element_text(size = 12, family="serif"),
+        panel.grid.major.y = element_line(color = "black", size = 0.1),
+        panel.grid.major.x = element_blank(),
+        plot.background = element_rect(fill = "white")) +
+scale_color_manual(name = "watersheds",
+                   values = c("#93E1D8", "#AA4465"),
+                   labels = c("Bisley Watershed", "Quebrada Prieta A Watershed")) +
+  scale_shape_discrete(name = "Watersheds:",
+                       labels = c("Bisley Watershed", "Quebrada Prieta A"))
+
+
+bisley_vs_QPA_k_plot / bisley_vs_QPA_n_plot
+
+```
