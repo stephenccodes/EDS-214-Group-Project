@@ -23,6 +23,7 @@ library(patchwork)
 #read in data for Quebrada Prieta A Watershed and Bisley Watershed (clean_table)
 
 raw5_QPA <- read_csv("/courses/EDS214/group_project/2024/senven/raw_data/knb-lter-luq/QuebradaPrieta-A.csv")
+
 View(QuebradaPrieta_A)
 
 view(clean_table)
@@ -100,19 +101,37 @@ subset_Bisley_n[ , 'sample_id'] = "Bisley"
 
 subset_Bisley_n <- subset_Bisley_n |>
    group_by(sample_date, sample_id) |>
-    summarize(no3 = mean(no3_n)) 
+    summarize(no3_n = mean(no3_n)) 
  
+clean_table_subset_join_n <- full_join(clean5_QPA, subset_Bisley_n)
 
 ```
 
 ```{r}
 # let's make a plot that compares the Bisley Watershed to QPA Watershed
 
-bisley_vs_QPA_k_plot <- ggplot(data = subset_Bisley_k, aes(x = sample_date, y = mean_bisley_k))+
+bisley_vs_QPA_k_plot <- ggplot(data = clean_table_subset_join_k, aes(x = sample_date, y = k)) +
   scale_x_date(date_breaks = "1 year", 
                minor_breaks = "1 month", 
                limits = as.Date(c("1988-01-01", "1995-01-01")))+
-  geom_line()
+  geom_line(aes(color = sample_id)) +
+  labs(x = "Years", 
+       y = "K",
+       title = "Bisley vs Quebrada Prieta A watershed" )
 
 bisley_vs_QPA_k_plot
+
+
+bisley_vs_QPA_n_plot <- ggplot(data = clean_table_subset_join_n, aes(x = sample_date, y = no3_n)) +
+  scale_x_date(date_breaks = "1 year", 
+               minor_breaks = "1 month", 
+               limits = as.Date(c("1988-01-01", "1995-01-01")))+
+  geom_line(aes(color = sample_id)) +
+  labs(x = "Years", 
+       y = "NO3" )
+
+bisley_vs_QPA_n_plot
+
+bisley_vs_QPA_k_plot / bisley_vs_QPA_n_plot
+
 ```
