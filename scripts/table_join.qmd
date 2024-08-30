@@ -113,5 +113,10 @@ copycat_n_plot / copycat_k_plot
 ```
 
 
+```{r}
+ggsave(here("figures", "K_NO3_plots.png"))
+```
+
+
 
 
