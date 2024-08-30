@@ -114,11 +114,6 @@ copycat_n_plot <- ggplot(data = clean_table, aes(x = sample_date, y = no3_n)) +
 copycat_n_plot / copycat_k_plot 
 ```
 
-
 ```{r}
 ggsave(here("figures", "K_NO3_plots.png"), width = 10, height = 10)
 ```
-
-
-
-
